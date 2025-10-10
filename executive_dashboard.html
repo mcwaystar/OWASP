@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Summary Dashboard - 2025 Request Metrics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6900 0%, #d65500 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .dashboard {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #ff6900;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .stat-card .label {
+            color: #999;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .stat-card .value {
+            color: #ff6900;
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card.large .value {
+            font-size: 2.5em;
+        }
+        
+        .stat-card .subtext {
+            color: #666;
+            font-size: 0.85em;
+        }
+        
+        .section-title {
+            color: white;
+            font-size: 1.8em;
+            margin: 30px 0 20px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .chart-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+        
+        .chart-container h2 {
+            color: #ff6900;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+        }
+        
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .bar-chart {
+            width: 100%;
+        }
+        
+        .bar-item {
+            margin-bottom: 20px;
+        }
+        
+        .bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .bar-name {
+            color: #333;
+        }
+        
+        .bar-value {
+            color: #ff6900;
+            font-weight: bold;
+        }
+        
+        .bar-background {
+            width: 100%;
+            height: 30px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6900 0%, #d65500 100%);
+            border-radius: 15px;
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        
+        .table-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
+        
+        .table-container h2 {
+            color: #ff6900;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background: linear-gradient(90deg, #ff6900 0%, #d65500 100%);
+            color: white;
+        }
+        
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 1px;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        tbody tr:hover {
+            background: #fff5f0;
+        }
+        
+        .rank {
+            width: 50px;
+            text-align: center;
+            font-weight: bold;
+            color: #ff6900;
+        }
+        
+        .percentage {
+            color: #999;
+            font-size: 0.9em;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+        
+        .metric-item {
+            background: #fff5f0;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #ff6900;
+        }
+        
+        .metric-item .metric-label {
+            color: #666;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+        }
+        
+        .metric-item .metric-value {
+            color: #333;
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 1200px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>📊 Executive Summary Dashboard</h1>
+            <p>2025 Request Metrics - Comprehensive Performance Overview</p>
+        </div>
+        
+        <h2 class="section-title">Site Performance Overview</h2>
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <div class="label">SITE NAME</div>
+                <div class="value">0</div>
+                <div class="subtext">Audit Items</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="label">Common</div>
+                <div class="value">387</div>
+                <div class="subtext">Audit Items</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="label">HITRUST</div>
+                <div class="value">229</div>
+                <div class="subtext">Audit Items</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="label">HITRUST Readiness</div>
+                <div class="value">87</div>
+                <div class="subtext">Audit Items</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="label">PCI</div>
+                <div class="value">436</div>
+                <div class="subtext">Audit Items</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="label">SOC+HIPAA</div>
+                <div class="value">26</div>
+                <div class="subtext">Audit Items</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="label">SOX</div>
+                <div class="value">515</div>
+                <div class="subtext">Audit Items</div>
+            </div>
+
+        </div>
+        
+        <h2 class="section-title">Key Performance Indicators</h2>
+        <div class="stats-grid">
+            <div class="stat-card large">
+                <div class="label">Total AIs</div>
+                <div class="value">1,680</div>
+                <div class="subtext">Audit Items</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="label">Submitted</div>
+                <div class="value">323</div>
+                <div class="subtext">AIs submitted</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="label">Acknowledged</div>
+                <div class="value">1,293</div>
+                <div class="subtext">AIs acknowledged</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="label">Requires Response</div>
+                <div class="value">63</div>
+                <div class="subtext">Pending action</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="label">Active Teams</div>
+                <div class="value">23</div>
+                <div class="subtext">Contributing teams</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="label">Active Delegates</div>
+                <div class="value">71</div>
+                <div class="subtext">Total delegates</div>
+            </div>
+        </div>
+        
+        <h2 class="section-title">Timing & Escalation Metrics</h2>
+        <div class="chart-container">
+            <div class="metrics-grid">
+                <div class="metric-item">
+                    <div class="metric-label">Avg Days to Submit</div>
+                    <div class="metric-value">38</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Avg Days to Acknowledge</div>
+                    <div class="metric-value">69</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Avg Submit to Ack</div>
+                    <div class="metric-value">31</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Reminders Sent</div>
+                    <div class="metric-value">2,662</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Manager Escalations</div>
+                    <div class="metric-value">1,448</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Skip Level Escalations</div>
+                    <div class="metric-value">773</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Scott Ruthe Escalations</div>
+                    <div class="metric-value">4,178</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Documents</div>
+                    <div class="metric-value">4,972</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Comments</div>
+                    <div class="metric-value">3,408</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Date Changes</div>
+                    <div class="metric-value">1,589</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Due Date Changed</div>
+                    <div class="metric-value">205</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-label">Future Dated</div>
+                    <div class="metric-value">26</div>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="section-title">Top Performers</h2>
+        <div class="chart-container">
+            <div class="metrics-grid">
+                <div class="metric-item" style="grid-column: span 2;">
+                    <div class="metric-label">Most Requests</div>
+                    <div class="metric-value" style="font-size: 1.1em;">Team SecOps - 247</div>
+                </div>
+                <div class="metric-item" style="grid-column: span 2;">
+                    <div class="metric-label">Most Early/On-Time</div>
+                    <div class="metric-value" style="font-size: 1.1em;">Team SaaS - 186</div>
+                </div>
+                <div class="metric-item" style="grid-column: span 2;">
+                    <div class="metric-label">Most Late</div>
+                    <div class="metric-value" style="font-size: 1.1em;">Team SecOps - 116</div>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="section-title">Request Distribution</h2>
+        <div class="two-column">
+            <div class="chart-container">
+                <h2>Top 5 Teams by Request Volume</h2>
+                <div class="bar-chart">
+
+                    <div class="bar-item">
+                        <div class="bar-label">
+                            <span class="bar-name">It Risk & Compliance</span>
+                            <span class="bar-value">469 requests</span>
+                        </div>
+                        <div class="bar-background">
+                            <div class="bar-fill" style="width: 100.0%">
+                                100%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bar-item">
+                        <div class="bar-label">
+                            <span class="bar-name">App Dev</span>
+                            <span class="bar-value">304 requests</span>
+                        </div>
+                        <div class="bar-background">
+                            <div class="bar-fill" style="width: 64.81876332622602%">
+                                65%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bar-item">
+                        <div class="bar-label">
+                            <span class="bar-name">Security Ops</span>
+                            <span class="bar-value">243 requests</span>
+                        </div>
+                        <div class="bar-background">
+                            <div class="bar-fill" style="width: 51.812366737739865%">
+                                52%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bar-item">
+                        <div class="bar-label">
+                            <span class="bar-name">Corp Mgmnt</span>
+                            <span class="bar-value">106 requests</span>
+                        </div>
+                        <div class="bar-background">
+                            <div class="bar-fill" style="width: 22.60127931769723%">
+                                23%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bar-item">
+                        <div class="bar-label">
+                            <span class="bar-name">Tech Cloudops</span>
+                            <span class="bar-value">87 requests</span>
+                        </div>
+                        <div class="bar-background">
+                            <div class="bar-fill" style="width: 18.550106609808104%">
+                                19%
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <h2>Top 5 Assignees by Request Volume</h2>
+                <div class="bar-chart">
+
+                    <div class="bar-item">
+                        <div class="bar-label">
+                            <span class="bar-name">Team Secops</span>
+                            <span class="bar-value">243 requests</span>
+                        </div>
+                        <div class="bar-background">
+                            <div class="bar-fill" style="width: 100.0%">
+                                100%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bar-item">
+                        <div class="bar-label">
+                            <span class="bar-name">Alec Knauss</span>
+                            <span class="bar-value">191 requests</span>
+                        </div>
+                        <div class="bar-background">
+                            <div class="bar-fill" style="width: 78.60082304526749%">
+                                79%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bar-item">
+                        <div class="bar-label">
+                            <span class="bar-name">Team SaaS</span>
+                            <span class="bar-value">135 requests</span>
+                        </div>
+                        <div class="bar-background">
+                            <div class="bar-fill" style="width: 55.55555555555556%">
+                                56%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bar-item">
+                        <div class="bar-label">
+                            <span class="bar-name">Steve Mosley</span>
+                            <span class="bar-value">120 requests</span>
+                        </div>
+                        <div class="bar-background">
+                            <div class="bar-fill" style="width: 49.382716049382715%">
+                                49%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bar-item">
+                        <div class="bar-label">
+                            <span class="bar-name">Team Corp</span>
+                            <span class="bar-value">104 requests</span>
+                        </div>
+                        <div class="bar-background">
+                            <div class="bar-fill" style="width: 42.79835390946502%">
+                                43%
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="section-title">Detailed Breakdowns</h2>
+        <div class="two-column">
+            <div class="table-container">
+                <h2>Complete Team Breakdown</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="rank">Rank</th>
+                            <th>Team Name</th>
+                            <th>Requests</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td class="rank">1</td>
+                            <td>It Risk & Compliance</td>
+                            <td><strong>469</strong></td>
+                            <td class="percentage">31.2%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">2</td>
+                            <td>App Dev</td>
+                            <td><strong>304</strong></td>
+                            <td class="percentage">20.3%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">3</td>
+                            <td>Security Ops</td>
+                            <td><strong>243</strong></td>
+                            <td class="percentage">16.2%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">4</td>
+                            <td>Corp Mgmnt</td>
+                            <td><strong>106</strong></td>
+                            <td class="percentage">7.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">5</td>
+                            <td>Tech Cloudops</td>
+                            <td><strong>87</strong></td>
+                            <td class="percentage">5.8%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">6</td>
+                            <td>Saas Sqldba</td>
+                            <td><strong>49</strong></td>
+                            <td class="percentage">3.3%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">7</td>
+                            <td>Dmo</td>
+                            <td><strong>45</strong></td>
+                            <td class="percentage">3.0%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">8</td>
+                            <td>Admin Finance</td>
+                            <td><strong>40</strong></td>
+                            <td class="percentage">2.7%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">9</td>
+                            <td>People Team</td>
+                            <td><strong>31</strong></td>
+                            <td class="percentage">2.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">10</td>
+                            <td>Site Reliability</td>
+                            <td><strong>26</strong></td>
+                            <td class="percentage">1.7%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">11</td>
+                            <td>Saas Nosqldba</td>
+                            <td><strong>21</strong></td>
+                            <td class="percentage">1.4%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">12</td>
+                            <td>Server Mgmnt</td>
+                            <td><strong>18</strong></td>
+                            <td class="percentage">1.2%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">13</td>
+                            <td>Admin Legal</td>
+                            <td><strong>18</strong></td>
+                            <td class="percentage">1.2%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">14</td>
+                            <td>Tech Services</td>
+                            <td><strong>11</strong></td>
+                            <td class="percentage">0.7%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">15</td>
+                            <td>(Blank)</td>
+                            <td><strong>8</strong></td>
+                            <td class="percentage">0.5%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">16</td>
+                            <td>Network Mgmnt</td>
+                            <td><strong>7</strong></td>
+                            <td class="percentage">0.5%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">17</td>
+                            <td>External</td>
+                            <td><strong>5</strong></td>
+                            <td class="percentage">0.3%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">18</td>
+                            <td>Patch Mgmnt</td>
+                            <td><strong>3</strong></td>
+                            <td class="percentage">0.2%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">19</td>
+                            <td>Cs Ops</td>
+                            <td><strong>3</strong></td>
+                            <td class="percentage">0.2%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">20</td>
+                            <td>Team Secops</td>
+                            <td><strong>2</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">21</td>
+                            <td>Vendor Mgmnt</td>
+                            <td><strong>2</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">22</td>
+                            <td>Product</td>
+                            <td><strong>2</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">23</td>
+                            <td>Dev App</td>
+                            <td><strong>1</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="table-container">
+                <h2>Complete Assignee Breakdown</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="rank">Rank</th>
+                            <th>Assignee Name</th>
+                            <th>Requests</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td class="rank">1</td>
+                            <td>Team Secops</td>
+                            <td><strong>243</strong></td>
+                            <td class="percentage">14.5%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">2</td>
+                            <td>Alec Knauss</td>
+                            <td><strong>191</strong></td>
+                            <td class="percentage">11.4%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">3</td>
+                            <td>Team SaaS</td>
+                            <td><strong>135</strong></td>
+                            <td class="percentage">8.0%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">4</td>
+                            <td>Steve Mosley</td>
+                            <td><strong>120</strong></td>
+                            <td class="percentage">7.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">5</td>
+                            <td>Team Corp</td>
+                            <td><strong>104</strong></td>
+                            <td class="percentage">6.2%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">6</td>
+                            <td>Luke Fast</td>
+                            <td><strong>84</strong></td>
+                            <td class="percentage">5.0%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">7</td>
+                            <td>Team SaaS</td>
+                            <td><strong>71</strong></td>
+                            <td class="percentage">4.2%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">8</td>
+                            <td>Paul Jette</td>
+                            <td><strong>52</strong></td>
+                            <td class="percentage">3.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">9</td>
+                            <td>Uma Bhavanam</td>
+                            <td><strong>50</strong></td>
+                            <td class="percentage">3.0%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">10</td>
+                            <td>Tiffany Clark</td>
+                            <td><strong>44</strong></td>
+                            <td class="percentage">2.6%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">11</td>
+                            <td>Greg Wimsatt</td>
+                            <td><strong>44</strong></td>
+                            <td class="percentage">2.6%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">12</td>
+                            <td>Thomas Rentschler</td>
+                            <td><strong>42</strong></td>
+                            <td class="percentage">2.5%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">13</td>
+                            <td>Tim Donlan</td>
+                            <td><strong>36</strong></td>
+                            <td class="percentage">2.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">14</td>
+                            <td>Tony Perkins</td>
+                            <td><strong>36</strong></td>
+                            <td class="percentage">2.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">15</td>
+                            <td>Bryan Smouse</td>
+                            <td><strong>34</strong></td>
+                            <td class="percentage">2.0%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">16</td>
+                            <td>Michael Cline</td>
+                            <td><strong>27</strong></td>
+                            <td class="percentage">1.6%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">17</td>
+                            <td>Darren Hobbs</td>
+                            <td><strong>26</strong></td>
+                            <td class="percentage">1.5%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">18</td>
+                            <td>Adam Evans</td>
+                            <td><strong>26</strong></td>
+                            <td class="percentage">1.5%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">19</td>
+                            <td>Patrick Nichols</td>
+                            <td><strong>20</strong></td>
+                            <td class="percentage">1.2%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">20</td>
+                            <td>Andrew Martin</td>
+                            <td><strong>19</strong></td>
+                            <td class="percentage">1.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">21</td>
+                            <td>Yun Wang</td>
+                            <td><strong>19</strong></td>
+                            <td class="percentage">1.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">22</td>
+                            <td>Erna Sehic</td>
+                            <td><strong>18</strong></td>
+                            <td class="percentage">1.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">23</td>
+                            <td>Kevin Adams</td>
+                            <td><strong>17</strong></td>
+                            <td class="percentage">1.0%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">24</td>
+                            <td>Anitha Shetty</td>
+                            <td><strong>17</strong></td>
+                            <td class="percentage">1.0%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">25</td>
+                            <td>Nilam Sorathia</td>
+                            <td><strong>16</strong></td>
+                            <td class="percentage">1.0%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">26</td>
+                            <td>Nicholas Hile</td>
+                            <td><strong>11</strong></td>
+                            <td class="percentage">0.7%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">27</td>
+                            <td>John Marshall</td>
+                            <td><strong>11</strong></td>
+                            <td class="percentage">0.7%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">28</td>
+                            <td>Shaine Hector</td>
+                            <td><strong>11</strong></td>
+                            <td class="percentage">0.7%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">29</td>
+                            <td>Jessica Nason</td>
+                            <td><strong>10</strong></td>
+                            <td class="percentage">0.6%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">30</td>
+                            <td>Brad Thomas</td>
+                            <td><strong>10</strong></td>
+                            <td class="percentage">0.6%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">31</td>
+                            <td>Matt Roverse</td>
+                            <td><strong>10</strong></td>
+                            <td class="percentage">0.6%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">32</td>
+                            <td>Mike Goldberg</td>
+                            <td><strong>10</strong></td>
+                            <td class="percentage">0.6%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">33</td>
+                            <td>Bryan Hicks</td>
+                            <td><strong>9</strong></td>
+                            <td class="percentage">0.5%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">34</td>
+                            <td>Bryan Cruise</td>
+                            <td><strong>9</strong></td>
+                            <td class="percentage">0.5%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">35</td>
+                            <td>Bryan Blomquist</td>
+                            <td><strong>8</strong></td>
+                            <td class="percentage">0.5%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">36</td>
+                            <td>(blank)</td>
+                            <td><strong>8</strong></td>
+                            <td class="percentage">0.5%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">37</td>
+                            <td>John Magee</td>
+                            <td><strong>7</strong></td>
+                            <td class="percentage">0.4%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">38</td>
+                            <td>John Muller</td>
+                            <td><strong>6</strong></td>
+                            <td class="percentage">0.4%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">39</td>
+                            <td>Steven Arth</td>
+                            <td><strong>5</strong></td>
+                            <td class="percentage">0.3%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">40</td>
+                            <td>Tyana Brock</td>
+                            <td><strong>4</strong></td>
+                            <td class="percentage">0.2%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">41</td>
+                            <td>Lizz Warren</td>
+                            <td><strong>4</strong></td>
+                            <td class="percentage">0.2%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">42</td>
+                            <td>Michael Cline 
+Tiffany Clark</td>
+                            <td><strong>4</strong></td>
+                            <td class="percentage">0.2%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">43</td>
+                            <td>Michael Kelsch</td>
+                            <td><strong>3</strong></td>
+                            <td class="percentage">0.2%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">44</td>
+                            <td>Jordan Dukes</td>
+                            <td><strong>3</strong></td>
+                            <td class="percentage">0.2%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">45</td>
+                            <td>zbeal@kpmg.com</td>
+                            <td><strong>3</strong></td>
+                            <td class="percentage">0.2%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">46</td>
+                            <td>Emad Sarraj</td>
+                            <td><strong>3</strong></td>
+                            <td class="percentage">0.2%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">47</td>
+                            <td>Ping Wang</td>
+                            <td><strong>3</strong></td>
+                            <td class="percentage">0.2%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">48</td>
+                            <td>Mandeep Singh</td>
+                            <td><strong>2</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">49</td>
+                            <td>Eric David</td>
+                            <td><strong>2</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">50</td>
+                            <td>Marcus Lyon</td>
+                            <td><strong>2</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">51</td>
+                            <td>Rick Blouch</td>
+                            <td><strong>2</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">52</td>
+                            <td>Travis Elkins</td>
+                            <td><strong>2</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">53</td>
+                            <td>Matt Rohde</td>
+                            <td><strong>2</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">54</td>
+                            <td>Hailey Keene</td>
+                            <td><strong>2</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">55</td>
+                            <td>Krishna Komanduri</td>
+                            <td><strong>2</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">56</td>
+                            <td>Amanda Hyer</td>
+                            <td><strong>2</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">57</td>
+                            <td>Kris Searcy</td>
+                            <td><strong>2</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">58</td>
+                            <td>Alfred Ellis</td>
+                            <td><strong>1</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">59</td>
+                            <td>Nick Neal</td>
+                            <td><strong>1</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">60</td>
+                            <td>Kristin Kelley</td>
+                            <td><strong>1</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">61</td>
+                            <td>Bryant Grimaldi</td>
+                            <td><strong>1</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">62</td>
+                            <td>Team Corp 
+Team SaaS</td>
+                            <td><strong>1</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">63</td>
+                            <td>zbianucci@kpmg.com</td>
+                            <td><strong>1</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">64</td>
+                            <td>James Wilson</td>
+                            <td><strong>1</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">65</td>
+                            <td>Joseph Rogina</td>
+                            <td><strong>1</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">66</td>
+                            <td>Lawrence Kim</td>
+                            <td><strong>1</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">67</td>
+                            <td>David Thurmond</td>
+                            <td><strong>1</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">68</td>
+                            <td>Yosef Hoffman</td>
+                            <td><strong>1</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">69</td>
+                            <td>Josh Bartlett</td>
+                            <td><strong>1</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">70</td>
+                            <td>Team Corp 
+Team SaaS</td>
+                            <td><strong>1</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">71</td>
+                            <td>Robb Haskins</td>
+                            <td><strong>1</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">72</td>
+                            <td>Tim Donlon 
+Thomas Rentschler 
+Mike Goldberg</td>
+                            <td><strong>1</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">73</td>
+                            <td>Team SaaS 
+John Marshall 
+Uma Bhavanam 
+Luke Fast 
+Team Secops</td>
+                            <td><strong>1</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                        <tr>
+                            <td class="rank">74</td>
+                            <td>Mark Elmy</td>
+                            <td><strong>1</strong></td>
+                            <td class="percentage">0.1%</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
